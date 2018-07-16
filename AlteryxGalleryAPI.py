@@ -6,6 +6,10 @@ import requests
 import string
 import json
 
+'''
+SEE README FOR INSTRUCTIONS ON FUNCTIONALITY
+GALLERY MODULE CREATED BY: DAVID PRYOR, NICK SIMMONS, AND RITU GOWLIKAR
+'''
 
 class Gallery(object):
     def __init__(self, apiLocation, apiKey, apiSecret):
@@ -119,5 +123,3 @@ class Gallery(object):
         base_string = "&".join((httpMethod.upper(), q(url), q(normalized_params)))
         sig = hmac.new("&".join([self.apiSecret, '']), base_string, hashlib.sha1)
         return sig.digest().encode("base64").rstrip('\n')
-
-
