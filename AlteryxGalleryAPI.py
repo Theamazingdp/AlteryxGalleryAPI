@@ -45,18 +45,19 @@ class Gallery(object):
         signature = self.generateSignature(method, url, params)
         params.update({'oauth_signature': signature})
         output = requests.get(url, data=params)
-        return output
+        return output, output.content
 
     '''Queue an app execution job. Returns ID of the job'''
 
     def executeWorkflow(self, appId):
         method = 'POST'
-        url = self.apiLocation + '/workflows/' + appID + '/jobs/'
+        url = self.apiLocation + '/workflows/' + appId + '/jobs/'
         params = self.buildOauthParams()
         signature = self.generateSignature(method, url, params)
         params.update({'oauth_signature': signature})
         output = requests.post(url, params=params)
-        return output
+        return output,output.content
+
 
     '''Returns the jobs for the given Alteryx Analytics App'''
 
@@ -67,7 +68,7 @@ class Gallery(object):
         signature = self.generateSignature(method, url, params)
         params.update({'oauth_signature': signature})
         output = requests.get(url, params=params)
-        return output
+        return output, output.content
 
     '''Retrieves the job and its current state'''
 
@@ -78,7 +79,7 @@ class Gallery(object):
         signature = self.generateSignature(method, url, params)
         params.update({'oauth_signature': signature})
         output = requests.get(url, params=params)
-        return output
+        return output, output.content
 
     '''Returns the output for a given job (FileURL)'''
 
@@ -89,7 +90,7 @@ class Gallery(object):
         signature = self.generateSignature(method, url, params)
         params.update({'oauth_signature': signature})
         output = requests.get(url, params=params)
-        return output
+        return output, output.content
 
     '''Returns the App that was requested'''
 
@@ -100,7 +101,7 @@ class Gallery(object):
         signature = self.generateSignature(method, url, params)
         params.update({'oauth_signature': signature})
         output = requests.get(url, params=params)
-        return output
+        return output, output.content
 
     '''Generate pseudorandom number'''
 
