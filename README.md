@@ -19,9 +19,9 @@ Note: This library is not avaliable through via PyPI and must be installed local
 
 `client_key = 'your_client_key_here'
  client_secret = 'your_client_secret_here'
- gallery_url = 'your_gallery_url'`
+ gallery_url = '"Your_gallery_API_URL"'`
  
- `x = Gallery('your_gallery_url', apiKey, apiSecret)`
+ `x = Gallery('gallery_url', apiKey, apiSecret)`
  
 ### x.subscription()
 
