@@ -44,18 +44,30 @@ class Gallery(object):
         params = self.buildOauthParams()
         signature = self.generateSignature(method, url, params)
         params.update({'oauth_signature': signature})
-        output = requests.get(url, data=params)
+        output = requests.get(url, params=params)
         return output, output.content
 
     '''Queue an app execution job. Returns ID of the job'''
 
-    def executeWorkflow(self, appId):
-        method = 'POST'
-        url = self.apiLocation + '/workflows/' + appId + '/jobs/'
-        params = self.buildOauthParams()
-        signature = self.generateSignature(method, url, params)
-        params.update({'oauth_signature': signature})
-        output = requests.post(url, params=params)
+    def executeWorkflow(self, appId, *kwpos, **kwargs):
+        if('payload' in kwargs):
+            print('Payload included: %s' % kwargs['payload'])
+            data = kwargs['payload']
+            method = 'POST'
+            url = self.apiLocation + '/workflows/' + appId + '/jobs/'
+            params = self.buildOauthParams()
+            signature = self.generateSignature(method, url, params)
+            params.update({'oauth_signature': signature})
+            output = requests.post(url, json=data, headers={'Content-Type':'application/json'}, params=params)
+        else:
+            print('No Payload included')
+            method = 'POST'
+            url = self.apiLocation + '/workflows/' + appId + '/jobs/'
+            params = self.buildOauthParams()
+            signature = self.generateSignature(method, url, params)
+            params.update({'oauth_signature': signature})
+            output = requests.post(url, params=params)
+            
         return output,output.content
 
 
