@@ -51,7 +51,7 @@ class Gallery(object):
 
     def executeWorkflow(self, appId):
         method = 'POST'
-        url = self.apiLocation + '/workflows/' + appID + '/jobs/'
+        url = self.apiLocation + '/workflows/' + appId + '/jobs/'
         params = self.buildOauthParams()
         signature = self.generateSignature(method, url, params)
         params.update({'oauth_signature': signature})
