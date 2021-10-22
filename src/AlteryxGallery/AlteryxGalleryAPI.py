@@ -132,7 +132,7 @@ class Gallery(object):
 
         q = lambda x: quote(x, safe="~")
         sorted_params = collections.OrderedDict(sorted(params.items()))
-        normalized_params = urllib.urlencode(sorted_params)
+        normalized_params = urllib.parse.urlencode(sorted_params)
         base_string = "&".join((httpMethod.upper(), q(url), q(normalized_params)))
         sig = hmac.new("&".join([self.apiSecret, '']), base_string, hashlib.sha1)
         return sig.digest().encode("base64").rstrip('\n')
