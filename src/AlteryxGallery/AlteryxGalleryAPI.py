@@ -1,138 +1,191 @@
 import time
+import json
 import collections
 import random
 import math
-import requests
 import string
-import json
+import base64
+import urllib
+import hmac
+import hashlib
+import requests
+import os
+import pandas as pd
 
-'''
-SEE README FOR INSTRUCTIONS ON FUNCTIONALITY
-GALLERY MODULE CREATED BY: DAVID PRYOR, NICK SIMMONS, AND RITU GOWLIKAR
-'''
 
-class Gallery(object):
-    def __init__(self, apiLocation, apiKey, apiSecret):
-        self.apiLocation = apiLocation
-        self.apiKey = apiKey
-        self.apiSecret = apiSecret
+class Gallery:
+    def __init__(self, api_location: str, api_key: str, api_secret: str):
+        self.api_location = api_location
+        self.api_key = api_key
+        self.api_secret = api_secret
 
-    def buildOauthParams(self):
-        return {'oauth_consumer_key': self.apiKey,
+    @property
+    def api_location(self):
+        return self._api_location
+
+    @api_location.setter
+    def api_location(self, loc):
+        if not loc:
+            raise Exception("'api_location' cannot be empty")
+        if not isinstance(loc, str):
+            raise TypeError(f"Invalid type {type(loc)} for variable 'api_location'")
+        self._api_location = loc
+
+    @property
+    def api_key(self):
+        return self._api_key
+
+    @api_key.setter
+    def api_key(self, key):
+        if not key:
+            raise Exception("'api_key' cannot be empty")
+        if not isinstance(key, str):
+            raise TypeError(f"Invalid type: {type(key)} for variable 'api_key'")
+        self._api_key = key
+
+    @property
+    def api_secret(self):
+        return self._api_secret
+
+    @api_secret.setter
+    def api_secret(self, secret_key):
+        if not secret_key:
+            raise Exception("'api_secret' cannot be empty")
+        if not isinstance(secret_key, str):
+            raise TypeError(f"Invalid type {type(secret_key)} for variable 'api_secret'")
+        self._api_secret = secret_key
+
+    def build_oauth_params(self):
+        """
+        :return:  A dictionary consisting of params for third-party
+        signature generation code based upon the OAuth 1.0a standard.
+        """
+        return {'oauth_consumer_key': self.api_key,
                 'oauth_nonce': self.generate_nonce(5),
                 'oauth_signature_method': 'HMAC-SHA1',
                 'oauth_timestamp': str(int(math.floor(time.time()))),
                 'oauth_version': '1.0'}
 
-    '''Finds workflows in a subscription'''
+    @staticmethod
+    def generate_nonce(length=5):
+        """
+        :return: Generate pseudorandom number
+        """
+        tmp_string = string.ascii_uppercase + string.digits + string.ascii_lowercase
+        return ''.join([str(random.choice(tmp_string)) for i in range(length)])
+
+    def generate_signature(self, http_method, url, params):
+        """
+        :return: returns HMAC-SHA1 signature
+        """
+        quote = lambda x: requests.utils.quote(x, safe="~")
+        sorted_params = collections.OrderedDict(sorted(params.items()))
+
+        normalized_params = urllib.parse.urlencode(sorted_params)
+        base_string = "&".join((http_method.upper(), quote(url), quote(normalized_params)))
+
+        secret_bytes = bytes("&".join([self.api_secret, '']), 'ascii')
+        base_bytes = bytes(base_string, 'ascii')
+        sig = hmac.new(secret_bytes, base_bytes, hashlib.sha1)
+        return base64.b64encode(sig.digest())
 
     def subscription(self):
+        """
+        :return: workflows in a subscription
+        """
         method = 'GET'
-        url = self.apiLocation + '/workflows/subscription/'
-        params = self.buildOauthParams()
-        signature = self.generateSignature(method, url, params)
+        url = self.api_location + '/workflows/subscription/'
+        params = self.build_oauth_params()
+        signature = self.generate_signature(method, url, params)
         params.update({'oauth_signature': signature})
         output = requests.get(url, params=params)
-        return output.text
+        output, output_content = output, json.loads(output.content.decode("utf8"))
+        return output, output_content
 
-
-    '''Returns the questions for the given Alteryx Analytics App'''
-
-    def questions(self, appId):
+    def questions(self, app_id):
+        """
+        :return: Returns the questions for the given Alteryx Analytics App
+        """
         method = 'GET'
-        url = self.apiLocation + '/workflows/' + appId + '/questions/'
-        params = self.buildOauthParams()
-        signature = self.generateSignature(method, url, params)
+        url = self.api_location + '/workflows/' + app_id + '/questions/'
+        params = self.build_oauth_params()
+        signature = self.generate_signature(method, url, params)
         params.update({'oauth_signature': signature})
         output = requests.get(url, params=params)
-        return output, output.content
+        output, output_content = output, json.loads(output.content.decode("utf8"))
+        return output, output_content
 
-    '''Queue an app execution job. Returns ID of the job'''
+    def execute_workflow(self, app_id, **kwargs):
+        """
+        Queue an app execution job.
+        :return:  Returns ID of the job
+        """
+        method = 'POST'
+        url = self.api_location + '/workflows/' + app_id + '/jobs/'
+        params = self.build_oauth_params()
+        signature = self.generate_signature(method, url, params)
+        params.update({'oauth_signature': signature})
 
-    def executeWorkflow(self, appId, *kwpos, **kwargs):
-        if('payload' in kwargs):
-            print('Payload included: %s' % kwargs['payload'])
-            data = kwargs['payload']
-            method = 'POST'
-            url = self.apiLocation + '/workflows/' + appId + '/jobs/'
-            params = self.buildOauthParams()
-            signature = self.generateSignature(method, url, params)
-            params.update({'oauth_signature': signature})
-            output = requests.post(url, json=data, headers={'Content-Type':'application/json'}, params=params)
+        if 'payload' in kwargs:
+            output = requests.post(url,
+                                   json=kwargs['payload'],
+                                   headers={'Content-Type': 'application/json'},
+                                   params=params)
         else:
-            print('No Payload included')
-            method = 'POST'
-            url = self.apiLocation + '/workflows/' + appId + '/jobs/'
-            params = self.buildOauthParams()
-            signature = self.generateSignature(method, url, params)
-            params.update({'oauth_signature': signature})
             output = requests.post(url, params=params)
-            
-        return output,output.content
 
+        output, output_content = output, json.loads(output.content.decode("utf8"))
+        return output, output_content
 
-    '''Returns the jobs for the given Alteryx Analytics App'''
-
-    def getJobs(self, appId):
+    def get_jobs(self, app_id):
+        """
+        :return: Returns the jobs for the given Alteryx Analytics App
+        """
         method = 'GET'
-        url = self.apiLocation + '/workflows/' + appId + '/jobs/'
-        params = self.buildOauthParams()
-        signature = self.generateSignature(method, url, params)
+        url = self.api_location + '/workflows/' + app_id + '/jobs/'
+        params = self.build_oauth_params()
+        signature = self.generate_signature(method, url, params)
         params.update({'oauth_signature': signature})
         output = requests.get(url, params=params)
-        return output, output.content
+        output, output_content = output, json.loads(output.content.decode("utf8"))
+        return output, output_content
 
-    '''Retrieves the job and its current state'''
-
-    def getJobStatus(self, jobId):
+    def get_job_status(self, job_id):
+        """
+        :return: Retrieves the job and its current state
+        """
         method = 'GET'
-        url = self.apiLocation + '/jobs/' + jobId + '/'
-        params = self.buildOauthParams()
-        signature = self.generateSignature(method, url, params)
+        url = self.api_location + '/jobs/' + job_id + '/'
+        params = self.build_oauth_params()
+        signature = self.generate_signature(method, url, params)
         params.update({'oauth_signature': signature})
         output = requests.get(url, params=params)
-        return output, output.content
+        output, output_content = output, json.loads(output.content.decode("utf8"))
+        return output, output_content
 
-    '''Returns the output for a given job (FileURL)'''
-
-    def getJobOutput(self, jobID, outputID):
+    def get_job_output(self, job_id, output_id):
+        """
+        :return: Returns the output for a given job (FileURL)
+        """
         method = 'GET'
-        url = '/jobs/' + jobID + '/output/' + '/outputID/'
-        params = self.buildOauthParams()
-        signature = self.generateSignature(method, url, params)
+        url = self.api_location + '/jobs/' + job_id + '/output/' + output_id + '/'
+        params = self.build_oauth_params()
+        signature = self.generate_signature(method, url, params)
         params.update({'oauth_signature': signature})
         output = requests.get(url, params=params)
-        return output, output.content
+        output, output_content = output, output.content.decode("utf8")
+        return output, output_content
 
-    '''Returns the App that was requested'''
-
-    def getApp(self, appId):
+    def get_app(self, app_id):
+        """
+        :return: Returns the App that was requested
+        """
         method = 'GET'
-        url = self.apiLocation + '/' + appId + '/package/'
-        params = self.buildOauthParams()
-        signature = self.generateSignature(method, url, params)
+        url = self.api_location + '/' + app_id + '/package/'
+        params = self.build_oauth_params()
+        signature = self.generate_signature(method, url, params)
         params.update({'oauth_signature': signature})
         output = requests.get(url, params=params)
-        return output, output.content
+        output, output_content = output, json.loads(output.content.decode("utf8"))
+        return output, output_content
 
-    '''Generate pseudorandom number'''
-
-    def generate_nonce(self, length=5):
-        return ''.join([str(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase)) for i in
-                        range(length)])
-
-    def generateSignature(self, httpMethod, url, params):
-        import urllib
-        import hmac
-        import binascii
-        import hashlib
-        from requests.utils import quote
-
-        """returns HMAC-SHA1 sign"""
-
-        q = lambda x: quote(x, safe="~")
-        sorted_params = collections.OrderedDict(sorted(params.items()))
-        normalized_params = urllib.parse.urlencode(sorted_params)
-        base_string = "&".join((httpMethod.upper(), q(url), q(normalized_params)))
-        sig = hmac.new("&".join([self.apiSecret, '']), base_string, hashlib.sha1)
-        return sig.digest().encode("base64").rstrip('\n')
