@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+setup.cfg
+src/AlteryxGallery/AlteryxGalleryAPI.py
+src/AlteryxGallery/__init__.py
+src/alteryx_gallery_api.egg-info/PKG-INFO
+src/alteryx_gallery_api.egg-info/SOURCES.txt
+src/alteryx_gallery_api.egg-info/dependency_links.txt
+src/alteryx_gallery_api.egg-info/top_level.txt
