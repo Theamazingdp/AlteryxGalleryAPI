@@ -9,8 +9,6 @@ import urllib
 import hmac
 import hashlib
 import requests
-import os
-import pandas as pd
 
 
 class Gallery:
