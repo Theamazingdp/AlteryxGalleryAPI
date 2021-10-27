@@ -1,9 +1,0 @@
-LICENSE
-README.md
-setup.cfg
-setup.py
-AlteryxGalleryAPI.egg-info/PKG-INFO
-AlteryxGalleryAPI.egg-info/SOURCES.txt
-AlteryxGalleryAPI.egg-info/dependency_links.txt
-AlteryxGalleryAPI.egg-info/requires.txt
-AlteryxGalleryAPI.egg-info/top_level.txt
