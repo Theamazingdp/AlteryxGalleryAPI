@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="AlteryxGalleryAPI",
-    version="0.0.6",
+    version="0.0.7",
     author="PAUL HOUGHTON",
     author_email="paul.houghton@theinformationlab.co.uk",
     description="An API for connecting to an Alteryx Gallery. Forked from the project by DAVID PRYOR, NICK SIMMONS, AND RITU GOWLIKAR",
@@ -23,9 +23,7 @@ setuptools.setup(
     package_dir={'': 'src'},
     packages = setuptools.find_packages(where='src'),
     install_requires = ['pandas', 
-        'requests',
-        'setuptools>=42',
-        'wheel'],
+        'requests'],
     dependency_links=[
         'https://pypi.org/project/pandas/'
     ],
