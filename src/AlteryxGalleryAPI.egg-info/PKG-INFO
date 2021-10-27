@@ -1,18 +1,21 @@
 Metadata-Version: 2.1
 Name: AlteryxGalleryAPI
-Version: 0.1.0
-Summary: An API for connecting to an Alteryx Gallery
+Version: 0.0.5
+Summary: An API for connecting to an Alteryx Gallery. Forked from the project by DAVID PRYOR, NICK SIMMONS, AND RITU GOWLIKAR
 Home-page: https://github.com/Sivivatu/AlteryxGalleryAPI
-Author: Paul Houghton
+Author: PAUL HOUGHTON
 Author-email: paul.houghton@theinformationlab.co.uk
 License: UNKNOWN
 Project-URL: API Documentation, https://gallery.alteryx.com/api-docs/
+Project-URL: Source, https://github.com/Sivivatu/AlteryxGalleryAPI
 Project-URL: Bug Tracker, https://github.com/Sivivatu/AlteryxGalleryAPI/issues
 Platform: UNKNOWN
-Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
-Requires-Python: >=3.6
+Classifier: Development Status :: 3 - Alpha
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
 Description-Content-Type: text/markdown
 License-File: LICENSE
 

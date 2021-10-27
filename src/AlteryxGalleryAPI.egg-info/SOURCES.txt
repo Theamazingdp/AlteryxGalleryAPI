@@ -1,10 +1,11 @@
 LICENSE
 README.md
-pyproject.toml
 setup.cfg
+setup.py
 src/AlteryxGallery/AlteryxGalleryAPI.py
 src/AlteryxGallery/__init__.py
 src/AlteryxGalleryAPI.egg-info/PKG-INFO
 src/AlteryxGalleryAPI.egg-info/SOURCES.txt
 src/AlteryxGalleryAPI.egg-info/dependency_links.txt
+src/AlteryxGalleryAPI.egg-info/requires.txt
 src/AlteryxGalleryAPI.egg-info/top_level.txt

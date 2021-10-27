@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="AlteryxGalleryAPI",
-    version="0.0.4",
+    version="0.0.5",
     author="PAUL HOUGHTON",
     author_email="paul.houghton@theinformationlab.co.uk",
     description="An API for connecting to an Alteryx Gallery. Forked from the project by DAVID PRYOR, NICK SIMMONS, AND RITU GOWLIKAR",
