@@ -28,6 +28,6 @@ setuptools.setup(
     },
     install_requires = ['pandas', 
         'requests',
-        'setuptools',
+        'setuptools>=42',
         'wheel']
 )
