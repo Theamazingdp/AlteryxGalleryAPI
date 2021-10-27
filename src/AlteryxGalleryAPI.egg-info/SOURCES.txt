@@ -1,5 +1,6 @@
 LICENSE
 README.md
+pyproject.toml
 setup.cfg
 setup.py
 src/AlteryxGallery/AlteryxGalleryAPI.py
