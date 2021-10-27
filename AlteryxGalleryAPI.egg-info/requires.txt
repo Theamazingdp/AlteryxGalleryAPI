@@ -1,4 +1,4 @@
 pandas
 requests
-setuptools
+setuptools>=42
 wheel
