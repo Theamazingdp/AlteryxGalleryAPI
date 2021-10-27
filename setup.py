@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="AlteryxGalleryAPI",
-    version="0.1.1",
+    version="0.0.3",
     author="PAUL HOUGHTON",
     author_email="paul.houghton@theinformationlab.co.uk",
     description="An API for connecting to an Alteryx Gallery. Forked from the project by DAVID PRYOR, NICK SIMMONS, AND RITU GOWLIKAR",
@@ -17,9 +17,9 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
-        'Development Status :: 3 - Alpha',
-    'Programming Language :: Python :: 3.8',
-    'Programming Language :: Python :: 3.9'
+        'Development Status :: 3 - Alpha',  
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9'
     ),
     project_urls={
         'API Documentation': 'https://gallery.alteryx.com/api-docs/',
@@ -27,5 +27,7 @@ setuptools.setup(
         'Bug Tracker': 'https://github.com/Sivivatu/AlteryxGalleryAPI/issues',
     },
     install_requires = ['pandas', 
-        'requests']
+        'requests',
+        'setuptools',
+        'wheel']
 )
