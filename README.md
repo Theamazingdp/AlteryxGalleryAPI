@@ -18,7 +18,7 @@ Note: This library is not avaliable through via PyPI and must be installed local
 ## Usage
 
 ```
-from AlteryxGalleryAPI import AlteryxGalleryAPI
+from AlteryxGallery import AlteryxGalleryAPI
 
 client_key = 'your_client_key_here'
 client_secret = 'your_client_secret_here'
