@@ -174,16 +174,30 @@ class Gallery:
         output, output_content = output, output.content.decode("utf8")
         return output, output_content
 
-    def get_app(self, app_id):
-        """
-        :return: Returns the App that was requested
-        """
-        method = 'GET'
-        url = self.api_location + '/' + app_id + '/package/'
-        params = self.build_oauth_params()
-        signature = self.generate_signature(method, url, params)
-        params.update({'oauth_signature': signature})
-        output = requests.get(url, params=params)
-        output, output_content = output, json.loads(output.content.decode("utf8"))
-        return output, output_content
+    def get_app(self, app_id, app_name):
+            """
+            Retrieves the requested App from the Alteryx Gallery API and saves it to disk.
+
+            :param app_id: The ID of the App to retrieve.
+            :param app_name: The name of the App to save the file as.
+            :return: The file path where the App is saved.
+            """
+            method = 'GET'
+            url = self.api_location + '/admin/v1/' + app_id + '/package/'
+            params = self.build_oauth_params()
+            signature = self.generate_signature(method, url, params)
+            params.update({'oauth_signature': signature})
+            output = requests.get(url, params=params)
+            output_content = output.content
+
+            # Define the path and file name for the downloaded file
+            # Save it in the 'workflow' directory
+            file_path = f"{app_name}.yxzp"
+
+            # Write the content to a file
+            with open(file_path, 'wb') as file:
+                file.write(output_content)
+            
+            # Optionally return the file_path if needed
+            return file_path
 
