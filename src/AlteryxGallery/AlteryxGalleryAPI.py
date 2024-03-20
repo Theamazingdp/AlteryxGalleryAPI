@@ -16,6 +16,15 @@ class GalleryAuth(httpx.Auth):
         self.api_key = api_key
         self.api_secret = api_secret
 
+    def auth_flow(self, request):
+        """
+        :return: Returns the authentication token
+        """
+        method = 'POST'
+        url = self.api_location + '/oauth2/token'
+        payload = {"client_id": self.api_key, "client_secret": self.api_secret, "grant_type": "client_credentials"}
+        output = request.post(url, data=payload)
+
 class Gallery:
     def __init__(self, api_location: str, api_key: str, api_secret: str):
         self.api_location = api_location
@@ -58,14 +67,7 @@ class Gallery:
             raise TypeError(f"Invalid type {type(secret_key)} for variable 'api_secret'")
         self._api_secret = secret_key
 
-    def authenticate(self):
-        """
-        :return: Returns the authentication token
-        """
-        method = 'POST'
-        url = self.api_location + '/oauth2/token'
-        payload = {"client_id": self.api_key, "client_secret": self.api_secret, "grant_type": "client_credentials"}
-        output = requests.post(url, data=payload)
+
         
 
     # def build_oauth_params(self):
