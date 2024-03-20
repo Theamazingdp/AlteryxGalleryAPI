@@ -1,15 +1,20 @@
-import time
+# import time
 import json
-import collections
-import random
-import math
-import string
-import base64
-import urllib
-import hmac
-import hashlib
-import requests
+# import collections
+# import random
+# import math
+# import string
+# import base64
+# import urllib
+# import hmac
+# import hashlib
+import httpx
 
+
+class GalleryAuth(httpx.Auth):
+    def __init__(self, api_key: str, api_secret: str):
+        self.api_key = api_key
+        self.api_secret = api_secret
 
 class Gallery:
     def __init__(self, api_location: str, api_key: str, api_secret: str):
@@ -53,39 +58,49 @@ class Gallery:
             raise TypeError(f"Invalid type {type(secret_key)} for variable 'api_secret'")
         self._api_secret = secret_key
 
-    def build_oauth_params(self):
+    def authenticate(self):
         """
-        :return:  A dictionary consisting of params for third-party
-        signature generation code based upon the OAuth 1.0a standard.
+        :return: Returns the authentication token
         """
-        return {'oauth_consumer_key': self.api_key,
-                'oauth_nonce': self.generate_nonce(5),
-                'oauth_signature_method': 'HMAC-SHA1',
-                'oauth_timestamp': str(int(math.floor(time.time()))),
-                'oauth_version': '1.0'}
+        method = 'POST'
+        url = self.api_location + '/oauth2/token'
+        payload = {"client_id": self.api_key, "client_secret": self.api_secret, "grant_type": "client_credentials"}
+        output = requests.post(url, data=payload)
+        
 
-    @staticmethod
-    def generate_nonce(length=5):
-        """
-        :return: Generate pseudorandom number
-        """
-        tmp_string = string.ascii_uppercase + string.digits + string.ascii_lowercase
-        return ''.join([str(random.choice(tmp_string)) for i in range(length)])
+    # def build_oauth_params(self):
+    #     """
+    #     :return:  A dictionary consisting of params for third-party
+    #     signature generation code based upon the OAuth 1.0a standard.
+    #     """
+    #     return {'oauth_consumer_key': self.api_key,
+    #             'oauth_nonce': self.generate_nonce(5),
+    #             'oauth_signature_method': 'HMAC-SHA1',
+    #             'oauth_timestamp': str(int(math.floor(time.time()))),
+    #             'oauth_version': '1.0'}
 
-    def generate_signature(self, http_method, url, params):
-        """
-        :return: returns HMAC-SHA1 signature
-        """
-        quote = lambda x: requests.utils.quote(x, safe="~")
-        sorted_params = collections.OrderedDict(sorted(params.items()))
+    # @staticmethod
+    # def generate_nonce(length=5):
+    #     """
+    #     :return: Generate pseudorandom number
+    #     """
+    #     tmp_string = string.ascii_uppercase + string.digits + string.ascii_lowercase
+    #     return ''.join([str(random.choice(tmp_string)) for i in range(length)])
 
-        normalized_params = urllib.parse.urlencode(sorted_params)
-        base_string = "&".join((http_method.upper(), quote(url), quote(normalized_params)))
+    # def generate_signature(self, http_method, url, params):
+    #     """
+    #     :return: returns HMAC-SHA1 signature
+    #     """
+    #     quote = lambda x: requests.utils.quote(x, safe="~")
+    #     sorted_params = collections.OrderedDict(sorted(params.items()))
 
-        secret_bytes = bytes("&".join([self.api_secret, '']), 'ascii')
-        base_bytes = bytes(base_string, 'ascii')
-        sig = hmac.new(secret_bytes, base_bytes, hashlib.sha1)
-        return base64.b64encode(sig.digest())
+    #     normalized_params = urllib.parse.urlencode(sorted_params)
+    #     base_string = "&".join((http_method.upper(), quote(url), quote(normalized_params)))
+
+    #     secret_bytes = bytes("&".join([self.api_secret, '']), 'ascii')
+    #     base_bytes = bytes(base_string, 'ascii')
+    #     sig = hmac.new(secret_bytes, base_bytes, hashlib.sha1)
+    #     return base64.b64encode(sig.digest())
 
     def subscription(self):
         """
