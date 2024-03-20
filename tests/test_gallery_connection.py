@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
 
-import requests
+import httpx
 from AlteryxGallery import AlteryxGalleryAPI
 import json
 
@@ -9,7 +9,7 @@ import json
 def gallery():
     return AlteryxGalleryAPI.Gallery(api_location='https://example.com', api_key='key', api_secret='secret')
 
-@patch('gallery.requests.get')
+@patch('gallery.httpx.get')
 def test_subscription(mock_get, gallery: AlteryxGalleryAPI.Gallery):
     mock_response = {'workflows': [{'id': 1, 'name': 'workflow1'}, {'id': 2, 'name': 'workflow2'}]}
     mock_get.return_value.status_code = 200
@@ -26,12 +26,12 @@ def test_subscription(mock_get, gallery: AlteryxGalleryAPI.Gallery):
 def gallery():
     return AlteryxGalleryAPI.Gallery(api_location='https://example.com', api_key='key', api_secret='secret')
 
-@patch('AlteryxGalleryAPI.Gallery.requests.get')
+@patch('AlteryxGalleryAPI.Gallery.httpx.get')
 @patch('builtins.open', new_callable=mock_open)
 def test_get_app(mock_file, mock_get, gallery: AlteryxGalleryAPI.Gallery):
     app_id = '123'
     app_name = 'test_app'
-    mock_response = requests.Response()
+    mock_response = httpx.Response()
     mock_response.status_code = 200
     mock_response._content = b'test content'
     mock_get.return_value = mock_response
