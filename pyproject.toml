@@ -1,16 +1,16 @@
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "AlteryxGalleryAPI"
-version = "0.0.7"
+version = "0.0.8"
 authors = [
   { name="PAUL HOUGHTON",  email="paul.houghton@theinformationlab.co.uk"},
 ]
 description = "An API for connecting to an Alteryx Gallery. Forked from the project by DAVID PRYOR, NICK SIMMONS, AND RITU GOWLIKAR"
 readme = "README.md"
-requires-python = ">=3.8, <3.12"
+requires-python = ">=3.8, <=3.12"
 license = {file = "LICENSE"}
 classifiers = [
                 "License :: OSI Approved :: MIT License",
@@ -20,7 +20,8 @@ classifiers = [
                 "Programming Language :: Python :: 3.9",
                 "Programming Language :: Python :: 3.10",
                 "Programming Language :: Python :: 3.11",
-                "Audience :: Developers",
+                "Programming Language :: Python :: 3.12",
+                "Intended Audience :: Developers",
                 "Topic :: Utilities",
 ]
 dependencies = [
@@ -28,9 +29,15 @@ dependencies = [
         ]
 
 [project.urls]
-"API Documentation" = "https://gallery.alteryx.com/api-docs/"
+"API Documentation" = "https://help.alteryx.com/current/en/server/api-overview/alteryx-server-api-v3.html"
 "Source" = "https://github.com/Sivivatu/AlteryxGalleryAPI"
 "Bug Tracker" = "https://github.com/Sivivatu/AlteryxGalleryAPI/issues"
+
+[tool.hatch.build.targets.wheel]
+include = [
+  "src/"
+]
+
 
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -41,3 +48,11 @@ log_cli_level = "info"
 testpaths = [
     "src",
 ]
+
+[tool.ruff.format]
+preview = true
+quote-style = "single"
+
+[tool.ruff.lint]
+preview = true
+extend-select = ["C901"]
