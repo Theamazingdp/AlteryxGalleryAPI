@@ -5,6 +5,16 @@ description = "An API for connecting to an Alteryx Gallery. Forked from the proj
 authors = ["Paul Houghton <paul.houghton@theinformationlab.co.uk>"]
 license = "MIT"
 readme = "README.md"
+packages = [
+    { include = "AlteryxGallery", from = "src" },
+]
+repository = "https://github.com/Sivivatu/AlteryxGalleryAPI"
+keywords = ["Alteryx Server", "Atleryx Gallery", "API", "Alteryx Gallery API", "Alteryx Server API", "Alteryx API"]
+
+[tool.poetry.urls]
+"API Documentation" = "https://help.alteryx.com/current/en/server/api-overview/alteryx-server-api-v3.html"
+"Bug Tracker" = "https://github.com/Sivivatu/AlteryxGalleryAPI/issues"
+
 
 [tool.poetry.dependencies]
 python = "^3.8"
