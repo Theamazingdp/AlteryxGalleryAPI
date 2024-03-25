@@ -27,5 +27,5 @@ client_secret = os.getenv("CLIENT_SECRET")
 with AlteryxGalleryAPI.GalleryClient(base_url=base_url) as client:
     client.authenticate(client_id, client_secret)
     response, content = client.get_all_workflows(name="00-Octopus Download Pipeline")
-    print(response.status_code)
-    print(content)
+    print(f"workflow query status response: {response.status_code}")
+    print(f"workflow query content: {content}")
