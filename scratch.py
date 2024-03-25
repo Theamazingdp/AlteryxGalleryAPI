@@ -1,4 +1,3 @@
-import httpx
 import os
 from dotenv import load_dotenv
 from AlteryxGallery import AlteryxGalleryAPI
