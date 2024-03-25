@@ -1,44 +1,38 @@
+from http import client
 import pytest
-from unittest.mock import patch
-
-import httpx
 from AlteryxGallery import AlteryxGalleryAPI
-import json
+import os
+from dotenv import load_dotenv
 
-@pytest.fixture
-def gallery():
-    return AlteryxGalleryAPI.Gallery(api_location='https://example.com', api_key='key', api_secret='secret')
+load_dotenv()
 
-@patch('gallery.httpx.get')
-def test_subscription(mock_get, gallery: AlteryxGalleryAPI.Gallery):
-    mock_response = {'workflows': [{'id': 1, 'name': 'workflow1'}, {'id': 2, 'name': 'workflow2'}]}
-    mock_get.return_value.status_code = 200
-    mock_get.return_value.content.decode.return_value = json.dumps(mock_response)
+# Fixture to initialize the HTTPX client
+@pytest.fixture(scope="module")
+def http_client():
+    base_url = os.getenv("BASE_URL")
+    client_id = os.getenv("CLIENT_ID")
+    client_secret = os.getenv("CLIENT_SECRET")
+    with AlteryxGalleryAPI.GalleryClient(base_url) as client:
+        client.client_id = client_id
+        client.client_secret = client_secret
+        yield client
 
-    response, content = gallery.subscription()
+# Test case for the authenticate method
+def test_authenticate(http_client):
+    # Test successful authentication
+    assert http_client.authenticate(http_client.client_id, http_client.client_secret) == True
 
+    # Test unsuccessful authentication
+    assert http_client.authenticate("incorrect_username", "incorrect_password") == False
+
+# Test case for the get_all_workflows method
+def test_get_all_workflows(http_client):
+    response, content = http_client.get_all_workflows(name="00-Octopus Download Pipeline")
     assert response.status_code == 200
-    assert content == mock_response
-
-# FILEPATH: /home/fatpunk/AlteryxGalleryAPI/src/tests/test_gallery_connection.py
-
-@pytest.fixture
-def gallery():
-    return AlteryxGalleryAPI.Gallery(api_location='https://example.com', api_key='key', api_secret='secret')
-
-@patch('AlteryxGalleryAPI.Gallery.httpx.get')
-@patch('builtins.open', new_callable=mock_open)
-def test_get_app(mock_file, mock_get, gallery: AlteryxGalleryAPI.Gallery):
-    app_id = '123'
-    app_name = 'test_app'
-    mock_response = httpx.Response()
-    mock_response.status_code = 200
-    mock_response._content = b'test content'
-    mock_get.return_value = mock_response
-
-    file_path = gallery.get_app(app_id, app_name)
-
-    assert file_path == f"{app_name}.yxzp"
-    mock_file.assert_called_once_with(f"{app_name}.yxzp", 'wb')
-    handle = mock_file()
-    handle.write.assert_called_once_with(b'test content')
+    assert content[0]["name"] == "00-Octopus Download Pipeline"
+    assert len(content[0]["name"]) > 0
+    
+    response, content = http_client.get_all_workflows(name="Non-existent Workflow")
+    assert response.status_code == 200
+    # assert content["name"] == "Non-existent Workflow"
+    assert len(content["name"]) == 0
