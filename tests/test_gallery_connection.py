@@ -35,4 +35,5 @@ def test_get_all_workflows(http_client):
     response, content = http_client.get_all_workflows(name="Non-existent Workflow")
     assert response.status_code == 200
     # assert content["name"] == "Non-existent Workflow"
-    assert len(content["name"]) == 0
+    # assert len(content[0]["name"]) == 0
+    assert len(content) == 0
