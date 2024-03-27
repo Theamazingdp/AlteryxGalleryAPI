@@ -1,8 +1,10 @@
+from math import log
 from typing import Dict, Any, Tuple
 import httpx
 import time
 import logging
 import logging.config
+
 
 # Set up logging
 # Set the logging format
@@ -70,133 +72,8 @@ class GalleryClient:
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
 
-    # Workflow methods
+
+    # Workflow Interaction Methods
     def get_all_workflows(self, **kwargs) -> Tuple[httpx.Response, Dict[str, Any]]:
+        logger.info("Getting all workflows...")
         return self._get("v3/workflows", params=kwargs)
-
-# # Example usage:
-# with AlteryxGalleryClient("https://your-alteryx-server/api/v3") as client:
-#     if client.authenticate("your_username", "your_password"):
-#         logger.info("Authentication successful!")
-#         print(client.get_data())
-#     else:
-#         logger.error("Authentication failed!")
-
-
-# TODO: Implement the following methods following the requirements of the Alteryx Gallery API
-    # def subscription(self):
-    #     """
-    #     :return: workflows in a subscription
-    #     """
-    #     method = 'GET'
-    #     url = self.api_location + '/workflows/subscription/'
-    #     params = self.build_oauth_params()
-    #     signature = self.generate_signature(method, url, params)
-    #     params.update({'oauth_signature': signature})
-    #     output = requests.get(url, params=params)
-    #     output, output_content = output, json.loads(output.content.decode("utf8"))
-    #     return output, output_content
-
-    # def questions(self, app_id):
-    #     """
-    #     :return: Returns the questions for the given Alteryx Analytics App
-    #     """
-    #     method = 'GET'
-    #     url = self.api_location + '/workflows/' + app_id + '/questions/'
-    #     params = self.build_oauth_params()
-    #     signature = self.generate_signature(method, url, params)
-    #     params.update({'oauth_signature': signature})
-    #     output = requests.get(url, params=params)
-    #     output, output_content = output, json.loads(output.content.decode("utf8"))
-    #     return output, output_content
-
-    # def execute_workflow(self, app_id, **kwargs):
-    #     """
-    #     Queue an app execution job.
-    #     :return:  Returns ID of the job
-    #     """
-    #     method = 'POST'
-    #     url = self.api_location + '/workflows/' + app_id + '/jobs/'
-    #     params = self.build_oauth_params()
-    #     signature = self.generate_signature(method, url, params)
-    #     params.update({'oauth_signature': signature})
-
-    #     if 'payload' in kwargs:
-    #         output = requests.post(url,
-    #                                json=kwargs['payload'],
-    #                                headers={'Content-Type': 'application/json'},
-    #                                params=params)
-    #     else:
-    #         output = requests.post(url, params=params)
-
-    #     output, output_content = output, json.loads(output.content.decode("utf8"))
-    #     return output, output_content
-
-    # def get_jobs(self, app_id):
-    #     """
-    #     :return: Returns the jobs for the given Alteryx Analytics App
-    #     """
-    #     method = 'GET'
-    #     url = self.api_location + '/workflows/' + app_id + '/jobs/'
-    #     params = self.build_oauth_params()
-    #     signature = self.generate_signature(method, url, params)
-    #     params.update({'oauth_signature': signature})
-    #     output = requests.get(url, params=params)
-    #     output, output_content = output, json.loads(output.content.decode("utf8"))
-    #     return output, output_content
-
-    # def get_job_status(self, job_id):
-    #     """
-    #     :return: Retrieves the job and its current state
-    #     """
-    #     method = 'GET'
-    #     url = self.api_location + '/jobs/' + job_id + '/'
-    #     params = self.build_oauth_params()
-    #     signature = self.generate_signature(method, url, params)
-    #     params.update({'oauth_signature': signature})
-    #     output = requests.get(url, params=params)
-    #     output, output_content = output, json.loads(output.content.decode("utf8"))
-    #     return output, output_content
-
-    # def get_job_output(self, job_id, output_id):
-    #     """
-    #     :return: Returns the output for a given job (FileURL)
-    #     """
-    #     method = 'GET'
-    #     url = self.api_location + '/jobs/' + job_id + '/output/' + output_id + '/'
-    #     params = self.build_oauth_params()
-    #     signature = self.generate_signature(method, url, params)
-    #     params.update({'oauth_signature': signature})
-    #     output = requests.get(url, params=params)
-    #     output, output_content = output, output.content.decode("utf8")
-    #     return output, output_content
-
-    # def get_app(self, app_id, app_name):
-    #         """
-    #         Retrieves the requested App from the Alteryx Gallery API and saves it to disk.
-
-    #         :param app_id: The ID of the App to retrieve.
-    #         :param app_name: The name of the App to save the file as.
-    #         :return: The file path where the App is saved.
-    #         """
-    #         method = 'GET'
-    #         url = self.api_location + '/admin/v1/' + app_id + '/package/'
-    #         params = self.build_oauth_params()
-    #         signature = self.generate_signature(method, url, params)
-    #         params.update({'oauth_signature': signature})
-    #         output = requests.get(url, params=params)
-    #         output_content = output.content
-
-    #         # Define the path and file name for the downloaded file
-    #         # Save it in the 'workflow' directory
-    #         file_path = f"{app_name}.yxzp"
-
-    #         # Write the content to a file
-    #         with open(file_path, 'wb') as file:
-    #             file.write(output_content)
-            
-    #         # Optionally return the file_path if needed
-    #         return file_path
-
-
-
